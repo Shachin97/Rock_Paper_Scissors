@@ -3,19 +3,23 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Random;
 
-public class RockPaperScissorsFrame extends JFrame
-{
-    JButton rockBtn, scissorBtn, paperBtn, quitBtn;
+public class RockPaperScissorsFrame extends JFrame {
+    JButton rockBtn, scissorBtn, paperBtn, quitBtn, newBtn;
     ImageIcon rockIcon, scissorIcon, paperIcon;
     JPanel statsPnl, mainPnl, showPnl, buttonPnl;
     JTextArea results;
     JScrollPane pane;
-    JLabel playerWinLabel, compWinLabel, tiesLabel;
+    JLabel playerWinLabel, compWinLabel, tiesLabel, gamesLabel,rockPlyLabel, paperPlyLabel,scissorsPlyLabel ;
     JTextField playerCount, compCount, tiesCount;
 
     int computerWins = 0;
     int playersWins = 0;
     int timeTies = 0;
+
+    int gamesPlayed = 0;
+    int rockPlayed = 0;
+    int scissorsPlayed = 0;
+    int paperPlayed = 0;
 
     int playerRock = 0;
     int playerPaper = 0;
@@ -27,10 +31,9 @@ public class RockPaperScissorsFrame extends JFrame
 
 
 
-    public RockPaperScissorsFrame()
-    {
+    public RockPaperScissorsFrame() {
         super("Rock Paper Scissors Game");
-        setSize(800, 800);
+        setSize(900, 1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
@@ -48,31 +51,35 @@ public class RockPaperScissorsFrame extends JFrame
         createTextPanel();
         mainPnl.add(showPnl, BorderLayout.CENTER);
 
+        JButton newBtn= new JButton();
+        newBtn.setLocation(1,3);
+
+
 
         setVisible(true);
 
 
-
     }
 
-    private void createButtonPanel()
-    {
-        buttonPnl= new JPanel();
-        buttonPnl.setLayout(new GridLayout(1,4));
-
+    private void createButtonPanel() {
+        buttonPnl = new JPanel();
+        buttonPnl.setLayout(new GridLayout(2, 4));
 
 
         rockBtn = new JButton("ROCK", new ImageIcon("Rock.png"));
         rockBtn.addActionListener((ActionEvent ae) ->
         {
+            rockPlayed++;
             results.append("You play Rock \t");
             compPlays(0);
+
 
         });
 
         scissorBtn = new JButton("SCISSORS", new ImageIcon("Scissors.png"));
         scissorBtn.addActionListener((ActionEvent ae) ->
         {
+            scissorsPlayed++;
             results.append("You play Scissors ");
             compPlays(2);
 
@@ -81,11 +88,11 @@ public class RockPaperScissorsFrame extends JFrame
         paperBtn = new JButton("PAPER", new ImageIcon("Paper.png"));
         paperBtn.addActionListener((ActionEvent ae) ->
         {
+            paperPlayed++;
             results.append("You play Paper ");
             compPlays(1);
 
         });
-
 
 
         quitBtn = new JButton("QUIT", new ImageIcon("Quit.png"));
@@ -99,98 +106,104 @@ public class RockPaperScissorsFrame extends JFrame
         buttonPnl.add(quitBtn);
 
 
-
-
-
-
     }
 
-    private void createTextPanel()
-    {
+    private void createTextPanel() {
         showPnl = new JPanel();
-        results = new JTextArea(15,30);
+        results = new JTextArea(15, 30);
         pane = new JScrollPane(results);
         showPnl.add(pane);
 
     }
 
-    private void createStatsPanel()
-
-    {
+    private void createStatsPanel() {
         statsPnl = new JPanel();
-        statsPnl.setLayout(new GridLayout(3,2));
+        statsPnl.setLayout(new GridLayout(3, 2));
 
         playerWinLabel = new JLabel("Player Wins : ");
         compWinLabel = new JLabel("Computer Wins : ");
         tiesLabel = new JLabel("Ties : ");
+        gamesLabel = new JLabel("Total Games Played : ");
+        rockPlyLabel = new JLabel("Player played Rock: " );
+        scissorsPlyLabel = new JLabel("Player played Scissors: ");
+        paperPlyLabel = new JLabel("Player played Paper: ");
 
-        playerCount = new JTextField(1);
-        compCount = new JTextField(1);
-        tiesCount = new JTextField(1);
+
+        statsPnl.add(rockPlyLabel);
+        statsPnl.add(scissorsPlyLabel);
+        statsPnl.add(paperPlyLabel);
 
         statsPnl.add(playerWinLabel);
-        statsPnl.add(playerCount);
 
         statsPnl.add(compWinLabel);
-        statsPnl.add(compCount);
 
         statsPnl.add(tiesLabel);
-        statsPnl.add(tiesCount);
 
-
+        statsPnl.add(gamesLabel);
 
     }
+
     private void compPlays(int playerMove)
-            // computer moves
-            // computer has 3 total moves and its random
-            // move 0 will be rock, 1 = paper 2 = scissors
-            // It will then get appened to the text area called results
+    // computer moves
+    // computer has 3 total moves and its random
+    // move 0 will be rock, 1 = paper 2 = scissors
+    // It will then get appened to the text area called results
+
     {
         Random rand = new Random();
         int compMove = rand.nextInt(3);
 
-        if (compMove == playerMove){
-            if (compMove == 0){
-                results.append("Computer plays: Rock\n It's a tie!\n");
-            }
-            else if (compMove == 1){
-                results.append("Computer plays: Paper\n It's a tie!\n");
-            }
-            else{
-                results.append("Computer plays: Scissors\n It's a tie!\n");
-            }
-            timeTies++;
-            // increase the value by 1 each time the game is tied
-            // and prints the number in tiesLabel
+    // if comp picks 0(rock), and player picks 1(paper), the player would win
+    // if comp picks1(paper) and player picks2(Scissors), the player would win
+    // if comp picks1(paper) and player picks0(rock), the comp would win
 
-        }
-        else if (compMove == 0 && playerMove == 1){
-            results.append("Computer plays: Rock\nYou win!\n");
+
+       if (compMove == playerMove) {
+           if (compMove == 0) {
+               results.append("Computer plays: Rock\n This is a tie!\n");
+           } else if (compMove == 1) {
+               results.append("Computer plays: Paper\n It's a tie!\n");
+           } else {
+               results.append("Computer plays: Scissors\n No one wins, Its a tie!\n");
+           }
+           timeTies++;
+           gamesPlayed++;
+       }
+        else if (compMove == 0 && playerMove == 1) {
+            results.append("Computer plays: Rock\nYou win!!\n");
             playersWins++;
-        }
-        else if (compMove == 0 && playerMove == 2){
-            results.append("Computer plays: Rock\nYou lose!\n");
+           gamesPlayed++;
+        } else if (compMove == 0 && playerMove == 2) {
+            results.append("Computer plays: Rock\nComputer Wins!\n");
             computerWins++;
-        }
-        else if (compMove == 1 && playerMove == 0){
-            results.append("Computer plays: Paper\nYou lose!\n");
+           gamesPlayed++;
+        } else if (compMove == 1 && playerMove == 0) {
+            results.append("Computer plays: Paper\nComputer Wins!\n");
             computerWins++;
-        }
-        else if (compMove == 1 && playerMove == 2){
+           gamesPlayed++;
+        } else if (compMove == 1 && playerMove == 2) {
             results.append("Computer plays: Paper\nYou win!\n");
             playersWins++;
-        }
-        else if (compMove == 2 && playerMove == 0){
+           gamesPlayed++;
+        } else if (compMove == 2 && playerMove == 0) {
             results.append("Computer plays: Scissors\nYou win!\n");
             playersWins++;
-        }
-        else if (compMove == 2 && playerMove == 1){
-            results.append("Computer plays: Scissors\nYou lose!\n");
+           gamesPlayed++;
+        } else if (compMove == 2 && playerMove == 1) {
+            results.append("Computer plays: Scissors\nComputer Wins!\n");
             computerWins++;
+           gamesPlayed++;
         }
-        tiesLabel.setText("Ties: " + timeTies);
-        playerWinLabel.setText("Player wins: " + playersWins);
-        compWinLabel.setText("Computer wins: " + computerWins);
+            // increase the value by
+            tiesLabel.setText("Ties: " + timeTies);
+            playerWinLabel.setText("Player wins: " + playersWins);
+            compWinLabel.setText("Computer wins: " + computerWins);
+            gamesLabel.setText("Total Games Played: "+ gamesPlayed);
+            rockPlyLabel.setText("Player played Rock: " + rockPlayed + " times");
+            scissorsPlyLabel.setText("Player played Scissors: " + scissorsPlayed + " times");
+            paperPlyLabel.setText("Player played Paper: " + paperPlayed + " times");
     }
-}
+
+
+    }
 
